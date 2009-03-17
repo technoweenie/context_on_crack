@@ -1,4 +1,4 @@
-%w(controller_example_group_methods).each { |lib| require "context_on_crack/#{lib}" }
+require "context_on_crack/controller_example_group_methods"
 
 begin
   require 'ruby2ruby'
