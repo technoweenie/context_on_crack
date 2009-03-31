@@ -121,19 +121,19 @@ module ContextOnCrack
     end
 
     def context(description, &block)
-      ControllerRequestGroup.new(self, "#{@controller.name} #{description}").instance_eval(&block)
+      ControllerRequestGroup.new(self, "#{@controller.name} #{description}", @before_blocks, @after_blocks).instance_eval(&block)
     end
   end
 
   class ControllerRequestGroup < ControllerGroup
     @@variable_types = {:headers => :to_s, :flash => nil, :session => nil}
 
-    def initialize(proxy, prefix)
+    def initialize(proxy, prefix, before_blocks, after_blocks)
       super(proxy)
       @prefix = prefix
       @acting_block  = nil
-      @before_blocks = []
-      @after_blocks  = []
+      @before_blocks = before_blocks.nil? ? [] : before_blocks.dup
+      @after_blocks  = after_blocks.nil? ? [] : after_blocks.dup
     end
 
     def acting_block
@@ -155,7 +155,7 @@ module ContextOnCrack
     end
 
     def context(description, &block)
-      ControllerRequestGroup.new(@proxy, "#{@prefix} #{description}").instance_eval(&block)
+      ControllerRequestGroup.new(@proxy, "#{@prefix} #{description}", @before_blocks, @after_blocks).instance_eval(&block)
     end
 
     def it(description, &block)
